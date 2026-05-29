@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Config 2026 — Fay's Schedule</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#111;color:#f0f0f0;min-height:100vh}
+.app{max-width:390px;margin:0 auto;padding:0 0 2rem}
+.nav{padding:0 1rem}
+.app-header{padding:1rem 0 0.75rem;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.app-title{font-size:17px;font-weight:500;color:#f0f0f0}
+.app-sub{font-size:12px;color:#999;margin-top:3px;line-height:1.6}
+.header-btns{display:flex;gap:6px;flex-shrink:0;margin-top:2px}
+.hbtn{display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;height:30px;padding:0 12px;border-radius:6px;cursor:pointer;white-space:nowrap;border:0.5px solid rgba(255,255,255,0.25);background:none;color:#f0f0f0;text-decoration:none;-webkit-appearance:none;appearance:none}
+.tab-row{display:flex;gap:6px;padding-top:10px;padding-bottom:8px}
+.tab{flex:1;height:34px;font-size:12px;font-weight:500;text-align:center;cursor:pointer;background:none;border:0.5px solid rgba(255,255,255,0.25) !important;outline:none !important;box-shadow:none !important;white-space:nowrap;color:#999;opacity:0.5;transition:opacity 0.15s ease;border-radius:6px;-webkit-appearance:none;appearance:none;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.tab:focus{outline:none !important;box-shadow:none !important}
+.tab.active{font-weight:600;color:#000;background:#fff;opacity:1;border-color:#fff !important}
+.tab.dimmed{opacity:0.2}
+.divider{height:0.5px;background:rgba(255,255,255,0.12)}
+.filter-row{display:flex;gap:5px;padding:10px 0;overflow-x:auto;scrollbar-width:none}
+.filter-row::-webkit-scrollbar{display:none}
+.chip{display:inline-flex;align-items:center;justify-content:center;height:26px;padding:0 10px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;border:0.5px solid transparent;transition:opacity 0.15s ease;line-height:1}
+.chip.dimmed{opacity:0.35}
+.chip-all{background:rgba(255,255,255,0.1);color:#999;border-color:rgba(255,255,255,0.15)}
+.chip-must{background:transparent;color:#D4537E;border:1.5px solid #D4537E}
+.chip-keynote{background:#02380D;color:#fff;border-color:#02380D}
+.chip-brand{background:#008600;color:#E1F5EE;border-color:#008600}
+.chip-systems{background:#6ADE19;color:#02380D;border-color:#6ADE19}
+.chip-ai{background:#4399EF;color:#042C53;border-color:#185FA5}
+.chip-neutral{background:rgba(255,255,255,0.1);color:#999;border-color:rgba(255,255,255,0.15)}
+.sessions{padding:0 1rem}
+.session-card{border-radius:12px;border:0.5px solid rgba(255,255,255,0.12);background:#1c1c1c;margin-bottom:10px;overflow:hidden}
+.session-card.conflict{border-color:#f9c740;border-width:1.5px}
+.session-card.ultimate{border-color:#D4537E;border-width:2px}
+.card-inner{padding:12px 14px}
+.card-time{font-size:11px;color:#999;margin-bottom:5px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.must-flag{display:inline-flex;align-items:center;background:#D4537E;color:#fff;font-size:10px;font-weight:500;padding:2px 6px;border-radius:20px}
+.conflict-flag{display:inline-flex;align-items:center;gap:3px;background:#f9c740;color:#412402;font-size:10px;font-weight:500;padding:2px 6px;border-radius:20px}
+.card-title{font-size:14px;font-weight:500;color:#f0f0f0;line-height:1.3;margin-bottom:5px}
+.card-meta{font-size:12px;color:#999;margin-bottom:7px}
+.card-link{font-size:11px;color:#999;display:inline-flex;align-items:center;gap:3px;margin-bottom:8px;text-decoration:none}
+.card-link:hover{color:#f0f0f0}
+.badges{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.badge{font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px}
+.b-keynote{background:#02380D;color:#fff}
+.b-brand{background:#008600;color:#E1F5EE}
+.b-systems{background:#6ADE19;color:#02380D}
+.b-ai{background:#4399EF;color:#042C53}
+.b-craft{background:rgba(255,255,255,0.1);color:#999;border:0.5px solid rgba(255,255,255,0.2)}
+.b-content{background:rgba(255,255,255,0.1);color:#999;border:0.5px solid rgba(255,255,255,0.2)}
+.why{font-size:12px;color:#999;line-height:1.5}
+.conflict-note{font-size:12px;line-height:1.4;padding:7px 9px;background:#2a1f0a;border-radius:8px;color:#d4a04a;margin-top:8px;display:flex;gap:6px;align-items:flex-start}
+.alt-section{border-top:0.5px solid rgba(255,255,255,0.1);padding:10px 14px}
+.alt-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.alt-label{font-size:10px;font-weight:500;color:#666;text-transform:uppercase;letter-spacing:0.05em}
+.alt-body{margin-top:7px}
+.alt-item{font-size:12px;color:#999;line-height:1.4;padding:6px 8px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:4px}
+.alt-item:last-child{margin-bottom:0}
+.alt-name{font-weight:500;color:#f0f0f0}
+.day-label{font-size:11px;font-weight:500;color:#666;padding:10px 0 8px;text-transform:uppercase;letter-spacing:0.06em}
+.empty{padding:2rem 0;text-align:center;font-size:13px;color:#666}
+.radar-banner{margin:0 0 10px;padding:10px 12px;background:#0d2318;border-radius:8px;border:0.5px solid #1d6e45;display:none}
+.radar-banner.show{display:block}
+.radar-title{font-size:12px;font-weight:500;color:#4db87a;margin-bottom:6px}
+.radar-item{font-size:11px;color:#4db87a;padding:5px 0;border-bottom:0.5px solid #1d6e45;line-height:1.4}
+.radar-item:last-child{border-bottom:none;padding-bottom:0}
+.chevron{display:inline-block;font-size:11px;color:#666}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="nav">
+    <div class="app-header">
+      <div>
+        <div class="app-title">Config 2026</div>
+        <div class="app-sub">June 23–25<br>Moscone Center, SF</div>
+      </div>
+      <div class="header-btns">
+        <a href="https://config.figma.com/san-francisco/agenda/" class="hbtn" target="_blank">Config</a>
+        <button class="hbtn" onclick="checkRadar()">See Updates</button>
+      </div>
+    </div>
+
+    <div id="radar-banner" class="radar-banner">
+      <div class="radar-title">Sessions to consider adding</div>
+      <div class="radar-item">"The Agentic Design-To-Code Loop" — Jun 25, 10:15 AM, Maker Stage. AI + dev workflows from Google.</div>
+      <div class="radar-item">"Legibility By Design" — Jun 25, 3:05 PM, Mezzanine. Head of Design at Waymo on AI + UX legibility.</div>
+      <div class="radar-item">"Writing For Humans In An AI World" — Jun 24, 12:10 PM, Mezzanine. Content Design at Anthropic.</div>
+    </div>
+
+    <div class="tab-row" id="tabs">
+      <button class="tab active" data-day="all" onclick="switchDay('all',this)">All</button>
+      <button class="tab" data-day="jun23" onclick="switchDay('jun23',this)">Tu 6/23</button>
+      <button class="tab" data-day="jun24" onclick="switchDay('jun24',this)">W 6/24</button>
+      <button class="tab" data-day="jun25" onclick="switchDay('jun25',this)">Th 6/25</button>
+    </div>
+    <div class="divider"></div>
+
+    <div class="filter-row" id="filter-row">
+      <div class="chip chip-all" data-filter="all" onclick="toggleFilter('all',this)">All</div>
+      <div class="chip chip-must" data-filter="ultimust" onclick="toggleFilter('ultimust',this)">Must</div>
+      <div class="chip chip-keynote" data-filter="keynote" onclick="toggleFilter('keynote',this)">Keynote</div>
+      <div class="chip chip-brand" data-filter="brand" onclick="toggleFilter('brand',this)">Brand</div>
+      <div class="chip chip-systems" data-filter="systems" onclick="toggleFilter('systems',this)">Systems</div>
+      <div class="chip chip-ai" data-filter="ai" onclick="toggleFilter('ai',this)">AI / Automation</div>
+      <div class="chip chip-neutral" data-filter="craft" onclick="toggleFilter('craft',this)">Craft</div>
+      <div class="chip chip-neutral" data-filter="content" onclick="toggleFilter('content',this)">Content</div>
+    </div>
+    <div class="divider"></div>
+  </div>
+
+  <div class="sessions" id="sessions-list"></div>
+</div>
+
+<script>
+const sessions=[
+  {id:'s1',day:'jun23',time:'9 AM – 7 PM',title:'Badge Pickup',location:'Moscone North',type:'logistics',badges:[],why:'Pick up today — beat the morning rush before sessions start Wed.',url:'https://config.figma.com/san-francisco/agenda/',alts:[]},
+  {id:'s2',day:'jun23',time:'12 – 7 PM',title:'Config Commons',location:'Outside Moscone',type:'logistics',badges:[],why:'Swag, community hangout, spontaneous convos. Best low-pressure networking of the conference.',url:'https://config.figma.com/san-francisco/agenda/',alts:[]},
+  {id:'s3',day:'jun24',time:'9:00 – 10:20 AM',title:'Opening Keynote — Figma Product Launch',location:'Main Stage · Dylan Field, Figma',type:'ultimust',badges:['keynote'],why:'Sets context for every other session. Non-negotiable.',url:'https://config.figma.com/san-francisco/session/829e6ced-3257-4f5c-b675-aa72f4d1f98f/',alts:[]},
+  {id:'s4',day:'jun24',time:'10:35 – 10:55 AM',title:'The Rules Are The Art: Creating With AI',location:'Main Stage · Holly Herndon, Artist',type:'keynote',badges:['keynote','ai'],why:'AI creativity through an artist\'s lens — good creative energy before the systems-heavy afternoon.',url:'https://config.figma.com/san-francisco/session/94c665ce-4b37-4127-b49a-425ac25319a2/',alts:[]},
+  {id:'s5',day:'jun24',time:'11:50 AM – 12:10 PM',title:'How To Build Content Systems For AI Product Workflows',location:'Maker Stage · Jessica Ouyang + Jolena Ma, Ditto',type:'must',badges:['ai','systems','content'],why:'Content systems + AI from a template-system lens — directly maps to how you structure your library and brief your team.',url:'https://config.figma.com/san-francisco/session/520fcaa6-76e0-4703-89b0-9f4dfb9a91de/',alts:[{name:'Out Of Sync, On Purpose: Desktop Design After Mobile Won',note:'Mezzanine, same time — UX + workflows from Spotify staff designer.',url:'https://config.figma.com/san-francisco/session/eb8fbea1-7cdf-420c-bfbe-cd676fccd1d0/'}]},
+  {id:'s6',day:'jun24',time:'1:05 – 1:25 PM',title:'Prompts To Fashion: AI-Powered 3D-Printed Garments',location:'Mezzanine Stage · Danit Peleg',type:'must',badges:['ai'],why:'End-to-end creative automation from a completely different industry — useful provocation for where your creative ops work is heading.',url:'https://config.figma.com/san-francisco/session/349f94c6-628e-40ff-9f90-119750e60bfa/',alts:[{name:'300GB Story: How To Inspire Action When Data Isn\'t Enough',note:'Level 2, 12:50 PM — research + storytelling.',url:'https://config.figma.com/san-francisco/session/5d27f158-dd26-4f34-b7e0-991224db8b7a/'}]},
+  {id:'s7',day:'jun24',time:'1:50 – 2:10 PM',title:'Hacking AI For Creative Operations At Scale',location:'Maker Stage · Rory Flynn, Systematiq AI',type:'must',badges:['ai'],why:'AI + creative ops + scale — directly on your automation brief. Top pick of day 1.',url:'https://config.figma.com/san-francisco/session/e49d78e2-a2ff-4b10-98bc-47bd6cec2d48/',alts:[{name:'The Studio That Bet On One Designer',note:'Level 2, 2:15 PM — lean design systems + org structure.',url:'https://config.figma.com/san-francisco/session/9d0af264-b7d0-4442-be81-26aef7ea89ca/'}]},
+  {id:'s8',day:'jun24',time:'2:30 – 2:55 PM',title:'How Structured Thinking Gives Your AI Superpowers',location:'Maker Stage · Carola Pescio Canale, Atlassian',type:'must',badges:['ai'],conflict:true,conflictNote:'5-min offset with "The Metacognitive Design Loop" starting 2:35 on Level 2. Different rooms — if you\'re fast you can catch both tails.',why:'Atlassian\'s Head of Design AI on structuring institutional knowledge for AI tools — directly applicable to making your production library legible to AI.',url:'https://config.figma.com/san-francisco/session/ca0448a6-6274-455e-b32e-7ed465ed8e7a/',alts:[]},
+  {id:'s9',day:'jun24',time:'2:35 – 2:55 PM',title:'The Metacognitive Design Loop',location:'Level 2 Stage · Jenny Au + Mike Green, Epsilon/Publicis',type:'must',badges:['ai','systems'],conflict:true,conflictNote:'5-min offset with "How Structured Thinking" at 2:30 on Maker Stage. Different rooms — start at Atlassian, walk to Level 2.',why:'Design systems + AI from a marketing/agency org, not product. Closest peer context in the whole schedule — Publicis is a direct comp.',url:'https://config.figma.com/san-francisco/session/6c44950a-077d-47bf-bad1-8cc71f995957/',alts:[{name:'How Structured Thinking Gives Your AI Superpowers',note:'Maker Stage, 2:30 PM — try to catch both.',url:'https://config.figma.com/san-francisco/session/ca0448a6-6274-455e-b32e-7ed465ed8e7a/'}]},
+  {id:'s10',day:'jun24',time:'2:55 – 3:15 PM',title:'Your Best Practices Are Trapped In Your Head — And Your AI Has No Idea',location:'Level 2 Stage · Harald Kirschner, Microsoft',type:'must',badges:['ai','systems'],conflict:true,conflictNote:'Runs same block as ESPN (3:05, Mezzanine). Microsoft is a PM speaker — ESPN is your exact peer role. If you can only pick one: ESPN.',why:'About making your tone of voice, component principles, and "definition of done" legible to AI — so it stops starting from scratch every session.',url:'https://config.figma.com/san-francisco/session/dbf85ddc-ab1f-41cf-8b33-e488f14b55a7/',alts:[{name:'ESPN\'s Migration Playbook',note:'Mezzanine, 3:05 PM — Elliott Munoz, Creative Director ESPN. Your closest peer in the schedule.',url:'https://config.figma.com/san-francisco/session/5ec10ea1-ecd4-4ccc-ab98-bc3ccd03137f/'}]},
+  {id:'s11',day:'jun24',time:'3:05 – 3:25 PM',title:'ESPN\'s Migration Playbook: The Move To Figma With One North',location:'Mezzanine Stage · Elliott Munoz, Creative Director ESPN + Matt Rogers, One North',type:'must',badges:['brand','systems'],conflict:true,conflictNote:'Runs same block as Microsoft (2:55, Level 2). Stronger pick — Elliott Munoz is your peer role. Catch last 10 min of Microsoft first, then walk here.',why:'Photoshop→Figma migration for broadcast graphics at scale — brand design systems, production-ready templates, accelerated workflows. Your closest peer in the entire schedule.',url:'https://config.figma.com/san-francisco/session/5ec10ea1-ecd4-4ccc-ab98-bc3ccd03137f/',alts:[{name:'Your Best Practices Are Trapped In Your Head',note:'Level 2, 2:55 PM — runs just before. Catch the first 10 min.',url:'https://config.figma.com/san-francisco/session/dbf85ddc-ab1f-41cf-8b33-e488f14b55a7/'}]},
+  {id:'s12',day:'jun24',time:'4:00 – 5:00 PM',title:'Closing Keynotes — TBA',location:'Main Stage',type:'keynote',badges:['keynote'],why:'Config closing keynotes tend to be the most creative and provocative slot of the day.',url:'https://config.figma.com/san-francisco/session/e8ea736f-5159-46d9-bed5-49855d992a91/',alts:[]},
+  {id:'s13',day:'jun25',time:'9:00 – 10:00 AM',title:'Opening Keynotes — Death Of The Finished State + Designing Math',location:'Main Stage · Brent David Freaney + Grant Sanderson',type:'keynote',badges:['keynote','brand','craft'],why:'"Death Of The Finished State" directly challenges your production-ready library standard. Good creative tension to carry into the day.',url:'https://config.figma.com/san-francisco/session/6c5a7b92-88f7-42d7-9ddc-b67cb35ec4ab/',alts:[]},
+  {id:'s14',day:'jun25',time:'10:20 – 10:40 AM',title:'10 Years Of Daily Sketching',location:'Mezzanine Stage · Zach Lieberman, MIT Media Lab',type:'must',badges:['craft'],why:'About daily creative practice — boredom, structuring iteration, creative freedom. Inspiring but code/generative-art flavored. Good creative reset; the alt is more directly applicable.',url:'https://config.figma.com/san-francisco/session/702164d5-9654-468e-9e8a-eeb3ef609fe7/',alts:[{name:'The Invisible Mechanisms In Your Interfaces',note:'Level 2, 10:30 AM — UX craft from a design engineer. More directly applicable.',url:'https://config.figma.com/san-francisco/session/cb25f8b3-31db-4849-a799-d02a2f052f5c/'}]},
+  {id:'s15',day:'jun25',time:'10:50 – 11:10 AM',title:'Dense By Design',location:'Level 2 Stage · Matthew Ström-Awn, mu.design',type:'must',badges:['craft'],why:'Why Google beat Yahoo, why Bloomberg Terminal dominates — maximizing value in time and space. Tufte, gestalt, perceived performance → usable framework. Directly applicable to email + LP layout.',url:'https://config.figma.com/san-francisco/session/69636242-b6b2-4b27-a831-bfd73eed654f/',alts:[{name:'The World Of Street Art And Care-Filled Design',note:'Mezzanine, 10:40 AM — illustration + visual design.',url:'https://config.figma.com/san-francisco/session/d4956efb-26bd-4c93-97c6-9ef7fdd72305/'}]},
+  {id:'s16',day:'jun25',time:'12:50 – 1:10 PM',title:'Everyone\'s Still Eating: Building Notion\'s Design System',location:'Level 2 Stage · Tamara Chu + Shauna Sapper, Notion',type:'ultimust',badges:['systems'],why:'Design systems + org survival during library-building. About maintaining a living system under org pressure — directly your situation.',url:'https://config.figma.com/san-francisco/session/9bbf68e9-0644-48df-9b6c-f4ad1827a146/',alts:[{name:'The Canvas Is Not Dead',note:'Mezzanine, 12:45 PM — Catt Small on AI + UX + workflows.',url:'https://config.figma.com/san-francisco/session/3a3146f3-98c6-40e7-a09b-ff3c606bf5c1/'}]},
+  {id:'s17',day:'jun25',time:'1:30 – 1:50 PM',title:'AI Gold: The First Design System In Figma Make',location:'Level 2 Stage · Harvey Whiting, Meta',type:'ultimust',badges:['ai','systems'],why:'First-mover content on AI-native design systems in Figma Make — directly relevant to where your library is heading.',url:'https://config.figma.com/san-francisco/session/c856c21b-317e-482c-8a3f-f01280aeed56/',alts:[{name:'Preparing Rocket For The AI Era',note:'Level 2, 1:10 PM — Director of Design Systems at Rocket on AI + scale.',url:'https://config.figma.com/san-francisco/session/cc9f82eb-31cd-4bd3-93db-bb060c95a6ac/'}]},
+  {id:'s18',day:'jun25',time:'1:40 – 2:00 PM',title:'Designing Brand Intelligence: From Rules To Expression',location:'Community Stage · Nicole Martinez, Let\'s Jetty',type:'ultimust',badges:['brand','ai'],why:'How brand rules become dynamic, expressive systems — the exact intersection of your design systems work and automation interest.',url:'https://config.figma.com/san-francisco/session/b14b91d9-50d9-4081-a943-51f331a2b4b4/',alts:[{name:'In Praise Of Dark Mode',note:'Community Stage, 1:10 PM — design systems + visual design. Same stage warmup.',url:'https://config.figma.com/san-francisco/session/404d5692-4463-4304-b74c-723a71e491a1/'}]},
+  {id:'s19',day:'jun25',time:'2:45 – 3:05 PM',title:'Designing Money: How To Build A Trustworthy Brand In The Age Of AI',location:'Mezzanine Stage · Chris Warner, Plaid',type:'must',badges:['brand','ai'],conflict:true,conflictNote:'Overlaps with "Design Systems Anarchy" (2:55, Level 2). Plaid ends 3:05, LoPrete starts 2:55 — catch 20 min of Plaid then walk to Level 2.',why:'Fintech brand + AI + visual design from Plaid. Direct comp to Credit Karma\'s trust + brand challenge. Most contextually relevant talk of the conference.',url:'https://config.figma.com/san-francisco/session/a2fa6160-4f88-4215-a6e9-f91c78ee3d51/',alts:[{name:'Don\'t Forget The Feeling: A Critique Of Software In 2026',note:'Community Stage, 2:40 PM — brand + AI from Figma\'s designer advocate.',url:'https://config.figma.com/san-francisco/session/4b523a98-9e0e-4b9e-8783-c405ab892602/'}]},
+  {id:'s20',day:'jun25',time:'2:55 – 3:15 PM',title:'Design Systems Anarchy',location:'Level 2 Stage · Lauren LoPrete',type:'must',badges:['systems','ai'],conflict:true,conflictNote:'Overlaps with Plaid (2:45, Mezzanine). Leave Plaid at 2:55 and walk to Level 2. LoPrete on systems culture is worth the shuffle.',why:'LoPrete on design systems as organizational infrastructure and culture — not just components. Expect this to challenge how you frame your library\'s role.',url:'https://config.figma.com/san-francisco/session/ace52d61-6725-4338-80c9-cd8b0e8757e4/',alts:[{name:'Gnarly By Design: Building Systems With Grit',note:'Community Stage, 2:10 PM — visual design + scale.',url:'https://config.figma.com/san-francisco/session/c6c9fdb6-0e45-4b0e-b966-76675517b045/'}]},
+  {id:'s21',day:'jun25',time:'4:00 – 5:00 PM',title:'Closing Keynotes — TBA',location:'Main Stage',type:'keynote',badges:['keynote'],why:'Last impression of the conference. Speakers TBA — don\'t skip.',url:'https://config.figma.com/san-francisco/session/2327c9de-d189-4b98-b49c-79bffa38b723/',alts:[]},
+  {id:'s22',day:'jun25',time:'5:00 – 6:30 PM',title:'Closing Happy Hour',location:'Config Commons',type:'logistics',badges:[],why:'Follow up on the week\'s convos. Best place to debrief on automation + brand systems with people you met.',url:'https://config.figma.com/san-francisco/agenda/',alts:[]}
+];
+
+let activeDay='all',activeFilter='all',altOpen={};
+
+function switchDay(day,el){
+  activeDay=day;
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.classList.remove('active','dimmed');
+    if(day!=='all'&&t.dataset.day!==day) t.classList.add('dimmed');
+  });
+  el.classList.remove('dimmed');
+  el.classList.add('active');
+  render();
+}
+
+function toggleFilter(f,el){
+  activeFilter=f;
+  document.querySelectorAll('.chip').forEach(c=>{
+    c.classList.remove('dimmed');
+    if(f!=='all'&&c.dataset.filter!==f) c.classList.add('dimmed');
+  });
+  render();
+}
+
+function toggleAlt(id){altOpen[id]=!altOpen[id];render();}
+function checkRadar(){document.getElementById('radar-banner').classList.toggle('show');}
+
+function matchesFilter(s){
+  if(activeFilter==='all') return true;
+  if(activeFilter==='keynote') return s.type==='keynote'||s.badges.includes('keynote');
+  if(activeFilter==='ultimust') return s.type==='ultimust';
+  return s.badges.includes(activeFilter);
+}
+
+const badgeMap={keynote:['b-keynote','Keynote'],brand:['b-brand','Brand'],systems:['b-systems','Systems'],ai:['b-ai','AI / Automation'],craft:['b-craft','Craft'],content:['b-content','Content']};
+const badgeOrder=['keynote','brand','systems','ai','craft','content'];
+
+function renderBadges(badges){
+  const deduped=[...new Set(badges)];
+  return badgeOrder.filter(b=>deduped.includes(b)).map(b=>{
+    const def=badgeMap[b];
+    return def?`<span class="badge ${def[0]}">${def[1]}</span>`:'';
+  }).join('');
+}
+
+const dayLabels={jun23:'Tuesday, Jun 23',jun24:'Wednesday, Jun 24',jun25:'Thursday, Jun 25'};
+
+function render(){
+  const list=document.getElementById('sessions-list');
+  const filtered=sessions.filter(s=>(activeDay==='all'||s.day===activeDay)&&matchesFilter(s));
+  if(!filtered.length){list.innerHTML='<div class="empty">No sessions match.</div>';return;}
+  let html='';
+  if(activeDay!=='all') html+=`<div class="day-label">${dayLabels[activeDay]}</div>`;
+  let lastDay='';
+  filtered.forEach(s=>{
+    if(activeDay==='all'&&s.day!==lastDay){
+      html+=`<div class="day-label">${dayLabels[s.day]}</div>`;
+      lastDay=s.day;
+    }
+    const isUlti=s.type==='ultimust';
+    const cardClass='session-card'+(s.conflict?' conflict':'')+(isUlti?' ultimate':'');
+    const mustFlag=isUlti?`<span class="must-flag">Must</span> `:'';
+    const cflag=s.conflict?`<span class="conflict-flag">⚠ Conflict</span>`:'';
+    const allBadges=renderBadges(s.badges);
+    const hasAlts=s.alts&&s.alts.length>0;
+    const altIsOpen=!!altOpen[s.id];
+    html+=`<div class="${cardClass}"><div class="card-inner">
+      <div class="card-time">${s.time} ${mustFlag}${cflag}</div>
+      <div class="card-title">${s.title}</div>
+      <div class="card-meta">${s.location}</div>
+      <a href="${s.url}" class="card-link" target="_blank">↗ View on Config site</a>
+      ${allBadges?`<div class="badges">${allBadges}</div>`:''}
+      ${s.why?`<div class="why">${s.why}${s.conflict&&s.conflictNote?`<div class="conflict-note">⚠ ${s.conflictNote}</div>`:''}
+      </div>`:''}
+    </div>`;
+    if(hasAlts){
+      html+=`<div class="alt-section"><div class="alt-header" onclick="toggleAlt('${s.id}')">
+        <span class="alt-label">Alt If Full</span>
+        <span class="chevron">${altIsOpen?'▲':'▼'}</span>
+      </div>`;
+      if(altIsOpen){
+        html+=`<div class="alt-body">`;
+        s.alts.forEach(a=>{
+          html+=`<div class="alt-item"><span class="alt-name">${a.name}</span> — ${a.note} <a href="${a.url}" style="color:#666;font-size:11px;text-decoration:none" target="_blank">↗</a></div>`;
+        });
+        html+=`</div>`;
+      }
+      html+=`</div>`;
+    }
+    html+=`</div>`;
+  });
+  list.innerHTML=html;
+}
+render();
+</script>
+</body>
+</html>
